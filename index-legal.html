@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pusat Hukum & Privasi - PT Adiba</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-4xl mx-auto px-5">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-2">
+                    <span class="font-[900] text-[20px] tracking-[-0.5px] uppercase text-slate-900">
+                        PT ADIBA<span class="text-emerald-500">.</span>
+                    </span>
+                </div>
+                <div>
+                    <a href="/" class="flex items-center text-sm font-[600] text-slate-500 hover:text-emerald-600 transition-colors uppercase tracking-widest">
+                        &larr; Halaman Utama
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="max-w-4xl mx-auto px-5 py-12 text-center">
+        <h1 class="text-3xl md:text-4xl font-[800] uppercase tracking-tight text-slate-900 mb-4">Pusat Informasi Hukum</h1>
+        <p class="text-slate-500 max-w-2xl mx-auto leading-relaxed">
+            Komitmen PT Adiba terhadap transparansi operasional, keamanan data transaksi bisnis, dan integritas kemitraan komersial yang sejalan dengan perundang-undangan di Indonesia.
+        </p>
+    </header>
+
+    <!-- Main Content: Tabs -->
+    <main class="max-w-4xl mx-auto px-5 pb-16">
+        <div class="bg-white rounded border border-slate-200 shadow-sm overflow-hidden">
+            
+            <!-- Tab Controls -->
+            <div class="flex border-b border-slate-200 divide-x divide-slate-200 bg-slate-50">
+                <button onclick="switchTab('privacy')" id="btn-privacy" class="flex-1 py-4 text-center font-[700] uppercase text-[13px] tracking-widest text-emerald-600 bg-white border-b-2 border-emerald-500 transition-colors">
+                    Kebijakan Privasi
+                </button>
+                <button onclick="switchTab('terms')" id="btn-terms" class="flex-1 py-4 text-center font-[700] uppercase text-[13px] tracking-widest text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors border-b-2 border-transparent">
+                    Syarat & Ketentuan
+                </button>
+            </div>
+
+            <!-- Tab Content Area -->
+            <div class="p-8 md:p-12">
+                
+                <!-- Kebijakan Privasi Content -->
+                <div id="content-privacy" class="tab-content active text-slate-700 leading-relaxed space-y-5">
+                    <h2 class="text-2xl font-[800] uppercase text-slate-900 border-b pb-3 mb-6">Kebijakan Privasi</h2>
+                    <p class="text-sm font-[600] text-emerald-600 uppercase tracking-widest mb-6">Terakhir Diperbarui: 25 Mei 2026</p>
+                    
+                    <p>Selamat datang di pelayanan elektronik <strong>PT Adiba [Nama Resmi Perusahaan]</strong>. Kami sangat menghargai privasi mitra bisnis Kami dan berkomitmen untuk melindungi kerahasiaan data pribadi maupun kredensial korporasi yang tertukar selama Anda berinteraksi dengan layanan maupun situs web Kami, sesuai dengan kaidah Undang-Undang Informasi dan Transaksi Elektronik (UU ITE) Republik Indonesia.</p>
+
+                    <h3 class="text-lg font-[800] uppercase text-slate-900 mt-8 mb-3">1. Informasi yang Kami Kumpulkan</h3>
+                    <p>Guna memaksimalkan kapabilitas pengadaan barang (General Supplier) dan proses pembayaran, Kami mengharuskan pengumpulan atribut informasi berikut:</p>
+                    <ul class="list-disc pl-5 space-y-2 mt-2">
+                        <li><strong>Data Kontak:</strong> Nama terang representatif, alamat email, dan nomor saluran telepon/seluler yang dapat dihubungi.</li>
+                        <li><strong>Data Perusahaan:</strong> Nama legal instansi bernaung, alamat surat-menyurat dan domisili, Nomor Pokok Wajib Pajak (NPWP), dan lisensi atau detail birokrasi bisnis lainnya.</li>
+                        <li><strong>Data Transaksi:</strong> Berkas penawaran harga (Inquiry/Quotation), bukti otorisasi pesanan (Purchase Order / PO), dan arsip komunikasi yang timbul selama realisasi kontrak jual-beli.</li>
+                    </ul>
+
+                    <h3 class="text-lg font-[800] uppercase text-slate-900 mt-8 mb-3">2. Penggunaan Informasi untuk Pemenuhan Pesanan</h3>
+                    <p>Setiap keping informasi yang Kami pegang dialokasikan semata-mata untuk fungsionalitas B2B agar selaras dengan kualitas komitmen, di antaranya:</p>
+                    <ul class="list-disc pl-5 space-y-2 mt-2">
+                        <li>Memastikan kelancaran proses pengadaan barang industri dan validitas administrasi dokumen penawaran harga.</li>
+                        <li>Memproses persetujuan faktur, sistem tagihan perbankan, dan solusi <em>Payment Handling</em> secara efisien antar perusahan.</li>
+                        <li>Penghubung komunikasi manakala ditemui kendala logistik, ketersediaan, serta merilis tanda terima valid.</li>
+                    </ul>
+
+                    <h3 class="text-lg font-[800] uppercase text-slate-900 mt-8 mb-3">3. Keamanan Data Transaksi</h3>
+                    <p>Mekanisme penanganan informasi Anda dilindungi di bawah kepatuhan prosedur keamanan PT Adiba. Secara internal, hanya elemen staf atau divisi yang ditunjuk secara teknis yang diizinkan memproses data PO maupun profil keuangan untuk mencegah pengaksesan tak berizin, penyalahgunaan identitas perseroan, manipulasi tagihan, atau kebocoran komersial.</p>
+
+                    <h3 class="text-lg font-[800] uppercase text-slate-900 mt-8 mb-3">4. Penggunaan Cookie Web Dasar</h3>
+                    <p>Pada navigasi platform situs web ini, Kami menanamkan utilitas <em>cookie</em> web esensial dalam rangka mendongkrak pengalaman penelusuran (User Experience), menyimpan sementara preferensi navigasional Anda (seperti preferensi bahasa atau antarmuka), dan merekam data kunjungan anonim agregat murni demi perbaikan infrastruktur portal Kami. Pengunjung secara mandiri berhak melakukan moderasi fungsional cookie ini langsung via preferensi penjelajah web (browser) masing-masing.</p>
+
+                    <h3 class="text-lg font-[800] uppercase text-slate-900 mt-8 mb-3">5. Hubungi Kami</h3>
+                    <p>Bilamana Anda mengutamakan perincian lebih presisi seputar tata laksana perlindungan informasi Anda, harap layangkan pertanyaan formal kepada wakil representatif korespondensi Kami melalui email resmi di: <a href="mailto:support@adiba.com" class="text-emerald-600 hover:text-emerald-800 font-[600]">support@adiba.com [Email Resmi]</a>.</p>
+                </div>
+
+                <!-- Syarat & Ketentuan Content -->
+                <div id="content-terms" class="tab-content text-slate-700 leading-relaxed space-y-5">
+                    <h2 class="text-2xl font-[800] uppercase text-slate-900 border-b pb-3 mb-6">Syarat & Ketentuan</h2>
+                    <p class="text-sm font-[600] text-emerald-600 uppercase tracking-widest mb-6">Terakhir Diperbarui: 25 Mei 2026</p>
+                    
+                    <p>Syarat dan Ketentuan berikut meletakkan pondasi landasan tata kerja dan regulasi kesepakatan komersial antara <strong>PT Adiba [Nama Resmi Perusahaan]</strong> ("Perusahaan" / "Kami") dengan para mitra ("Klien" / "Pelanggan"). Menjalankan komitmen kerja sama berarti Anda bersedia mematuhi klausa-klausa mutlak di bawah ini yang diterjemahkan berdasar payung hukum perdagangan legal di Republik Indonesia.</p>
+
+                    <h3 class="text-lg font-[800] uppercase text-slate-900 mt-8 mb-3">1. Hak dan Kewajiban General Supplier</h3>
+                    <p>PT Adiba eksis sebagai distributor, pemasok umum komoditas (General Supplier), ahli produk kimia manufaktur (Industrial Chemical), sekaligus pihak ketiga yang merapikan rute pembayaran (Payment Handling). Kami terikat secara kontraktual untuk menghadirkan material serta sarana sesuai pakta kesepahaman, sebaliknya, Pelanggan memiliki previlese hak penuntutan apabila ekspektasi meleset dari bukti nyata yang disepakati.</p>
+
+                    <h3 class="text-lg font-[800] uppercase text-slate-900 mt-8 mb-3">2. Ketentuan Pemesanan (Inquiry & Purchase Order)</h3>
+                    <ul class="list-disc pl-5 space-y-2 mt-2">
+                        <li><strong>Tahap Inquiry:</strong> Kami membuka lebar jendela untuk menerima proposal permintaan pasokan dengan perincian barang/jasa spesifik dari Pelanggan, yang setelahnya Kami proyeksikan dalam Surat Penawaran Harga resmi.</li>
+                        <li><strong>Validitas Pesanan:</strong> Seluruh kesepakatan bernilai mengikat hukum absolut tatkala Pelanggan menerbitkan atau melegalisasi <em>Purchase Order (PO)</em> tertulis selaku kontrak material. Segala revisi pasca PO turun membutuhkan persetujuan bipartit.</li>
+                    </ul>
+
+                    <h3 class="text-lg font-[800] uppercase text-slate-900 mt-8 mb-3">3. Pertimbangan Akurasi Harga</h3>
+                    <p>Mengingat watak dinamis dari sektor rantai pasok dan perubahan kurs fundamental, barisan harga di atas brosur dan surat Quotation sangat mungkin berubah sewaktu-waktu. Kami menuntut itikad transparansi yang maksimum bilamana revisi penyesuaian nominal berlangsung sebelum formulir PO ditandangani untuk melangkah maju tanpa pihak yang dicurangi.</p>
+
+                    <h3 class="text-lg font-[800] uppercase text-slate-900 mt-8 mb-3">4. Mekanisme Pembayaran (Payment Handling)</h3>
+                    <p>Dalam fungsi menangani manajemen perputaran pembayaran industri, Kami menempuh standarisasi baku:</p>
+                    <ul class="list-disc pl-5 space-y-2 mt-2">
+                        <li>Faktur bon (Invoice) akan dijatuhkan ke titik domisili perseroan Pelanggan manakala termin yang diperjanjikan (delivery term) memuncak. </li>
+                        <li>Skema pembayaran mutlak wajib dialirkan melalui alamat perbankan resmi atas nama institusi PT Adiba, dan diselesaikan mengikuti tempo (term of payment) kesepakatan PO terkait.</li>
+                        <li>Pelanggan dapat dikenakan penyesuaian denda keterlambatan yang lumrah jika komitmen setoran terhambat tanpa alasan perbankan yang fundamental.</li>
+                    </ul>
+
+                    <h3 class="text-lg font-[800] uppercase text-slate-900 mt-8 mb-3">5. Penyelesaian Perselisihan Siber dan Perdagangan</h3>
+                    <p>Tiap bentuk perbedaan penafsiran isi dokumen, komplain mutu bahan yang didistribusikan, atau ketimpangan sistem dalam siklus perolehan akan sedapatnya diadili secara asas musyawarah yang transparan terlebih dulu. Dalam tempo kemacetan selama 30 (tiga puluh) hari kalender, kedua belah himpunan institusi berkenan membawa gugatan final tersebut melalui domisili kepaniteraan Pengadilan Negeri Indonesia yang mempunyai yurisdiksi paling kuat di atas domisili PT Adiba.</p>
+                </div>
+
+            </div>
+        </div>
+        
+        <footer class="mt-12 text-center text-[13px] text-slate-500 font-[600]">
+            &copy; 2026 PT Adiba. All rights reserved.
+        </footer>
+    </main>
+
+    <script>
+        function switchTab(tabId) {
+            // Hide all contents
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            
+            // Show target content
+            document.getElementById('content-' + tabId).classList.add('active');
+            
+            // Reset button styles
+            const btnPrivacy = document.getElementById('btn-privacy');
+            const btnTerms = document.getElementById('btn-terms');
+            
+            const activeClasses = ['text-emerald-600', 'bg-white', 'border-emerald-500'];
+            const inactiveClasses = ['text-slate-500', 'hover:bg-slate-100', 'hover:text-slate-700', 'border-transparent'];
+            
+            if (tabId === 'privacy') {
+                btnPrivacy.classList.remove(...inactiveClasses);
+                btnPrivacy.classList.add(...activeClasses);
+                
+                btnTerms.classList.remove(...activeClasses);
+                btnTerms.classList.add(...inactiveClasses);
+            } else {
+                btnTerms.classList.remove(...inactiveClasses);
+                btnTerms.classList.add(...activeClasses);
+                
+                btnPrivacy.classList.remove(...activeClasses);
+                btnPrivacy.classList.add(...inactiveClasses);
+            }
+        }
+    </script>
+</body>
+</html>
