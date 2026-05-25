@@ -1,0 +1,6 @@
+{
+  "name": "Adiba B2B Profile",
+  "description": "Website Company Profile B2B untuk PT Adiba (Layanan Pengadaan Umum & Integrated Payment).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
