@@ -75,6 +75,23 @@ export async function getDb() {
       timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY(admin_id) REFERENCES users(id)
     );
+
+    CREATE TABLE IF NOT EXISTS push_vapid_keys (
+      id INTEGER PRIMARY KEY DEFAULT 1,
+      public_key TEXT NOT NULL,
+      private_key TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS push_subscriptions (
+      id TEXT PRIMARY KEY,
+      user_id TEXT,
+      endpoint TEXT UNIQUE NOT NULL,
+      p256dh TEXT NOT NULL,
+      auth TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(user_id) REFERENCES users(id)
+    );
   `);
 
   // Seed default admin

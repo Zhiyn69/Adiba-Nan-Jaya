@@ -23,6 +23,7 @@ import {
   Layers
 } from 'lucide-react';
 import CatalogView from '../components/CatalogView';
+import NotificationBell from '../components/NotificationBell';
 
 import { AuthProvider } from '../components/AuthContext';
 
@@ -80,6 +81,7 @@ export default function CustomerApp() {
                 >
                   {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                 </button>
+                <NotificationBell isDark={isDark} />
                 <button
                   onClick={() => setShowCatalog(true)}
                   className="relative overflow-hidden px-[24px] py-[12px] rounded font-[700] text-[14px] uppercase inline-flex items-center text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-emerald-500/40"
@@ -108,6 +110,7 @@ export default function CustomerApp() {
               >
                  {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
               </button>
+              <NotificationBell isDark={isDark} />
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className={`p-2 ${isDark ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900'}`}

@@ -25,6 +25,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import AuthModal from './AuthModal';
+import NotificationBell from './NotificationBell';
+import { useNotifications } from '../hooks/useNotifications';
 
 type CatalogItem = {
   id: string;
@@ -93,6 +95,7 @@ export default function CatalogView({ isDark, onClose }: CatalogViewProps) {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const { user, logout, logoutAll } = useAuth();
+  const { sendOrderNotification } = useNotifications();
 
   const filteredItems = DUMMY_CATALOG.filter(item => {
     const matchesCategory = activeCategory === 'all' || item.category === activeCategory;
@@ -156,8 +159,18 @@ export default function CatalogView({ isDark, onClose }: CatalogViewProps) {
   };
 
   const handleFinalConfirm = () => {
-    // This completes the order and goes to success screen
     setCartStep('success');
+    const totalFormatted = new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      maximumFractionDigits: 0,
+    }).format(cartTotalPrice.total);
+    sendOrderNotification({
+      title: 'Pesanan Diterima — PT Adiba',
+      body: `Pesanan senilai ${totalFormatted} telah kami terima. Tim kami akan segera memprosesnya.`,
+      tag: 'order-confirmation',
+      url: '/',
+    });
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -393,6 +406,7 @@ export default function CatalogView({ isDark, onClose }: CatalogViewProps) {
           </div>
         </div>
         <div className="flex items-center gap-4 relative">
+          <NotificationBell isDark={isDark} />
           {user ? (
             <div>
               <button 

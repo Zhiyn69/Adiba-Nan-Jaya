@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import CustomerApp from './customer/CustomerApp';
+import CustomerApp from './costumer/CustomerApp';
 import AdminApp from './admin/AdminApp';
 
 export default function App() {

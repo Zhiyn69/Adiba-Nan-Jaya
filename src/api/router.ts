@@ -4,9 +4,43 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import xss from 'xss';
 import rateLimit from 'express-rate-limit';
+import webpush from 'web-push';
 import { getDb } from '../database/db';
 
 const router = express.Router();
+
+// ---- VAPID key management ----
+let _vapidPublicKey = '';
+let _vapidPrivateKey = '';
+
+async function getVapidKeys() {
+  if (_vapidPublicKey) return { publicKey: _vapidPublicKey, privateKey: _vapidPrivateKey };
+
+  const db = await getDb();
+  const row = await db.get('SELECT * FROM push_vapid_keys WHERE id = 1');
+  if (row) {
+    _vapidPublicKey = row.public_key;
+    _vapidPrivateKey = row.private_key;
+  } else {
+    const keys = webpush.generateVAPIDKeys();
+    _vapidPublicKey = keys.publicKey;
+    _vapidPrivateKey = keys.privateKey;
+    await db.run('INSERT INTO push_vapid_keys (id, public_key, private_key) VALUES (1, ?, ?)', [
+      _vapidPublicKey,
+      _vapidPrivateKey,
+    ]);
+    console.log('✅ VAPID keys generated for push notifications');
+  }
+
+  webpush.setVapidDetails('mailto:admin@adiba.com', _vapidPublicKey, _vapidPrivateKey);
+  return { publicKey: _vapidPublicKey, privateKey: _vapidPrivateKey };
+}
+
+const pushNotifyLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 10,
+  message: { error: 'Terlalu banyak permintaan notifikasi' },
+});
 
 const JWT_SECRET = process.env.JWT_SECRET || 'adiba-customer-jwt-secret-fixed-2025';
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'adiba-refresh-jwt-secret-fixed-2025';
@@ -431,6 +465,170 @@ router.get("/admin/login-logs", adminMiddleware, async (req, res) => {
     res.json({ logs });
   } catch (err) {
     res.status(500).json({ error: "Server error" });
+  }
+});
+
+// ----------------------------------------------------
+// CSRF TOKEN (needed by frontend AuthContext)
+// ----------------------------------------------------
+
+router.get('/auth/csrf-token', (req, res) => {
+  const token = crypto.randomBytes(32).toString('hex');
+  res.cookie('csrfToken', token, {
+    httpOnly: false,
+    sameSite: 'strict',
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 60 * 60 * 1000,
+  });
+  res.json({ csrfToken: token });
+});
+
+router.post('/auth/logout-all', (req, res) => {
+  res.clearCookie('refreshToken');
+  res.clearCookie('accessToken');
+  res.clearCookie('adminToken');
+  res.json({ message: 'Logout semua sesi berhasil' });
+});
+
+// ----------------------------------------------------
+// PUSH NOTIFICATION ROUTES
+// ----------------------------------------------------
+
+router.get('/push/vapid-public-key', async (_req, res) => {
+  try {
+    const { publicKey } = await getVapidKeys();
+    res.json({ publicKey });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Gagal mengambil kunci VAPID' });
+  }
+});
+
+router.post('/push/subscribe', async (req, res) => {
+  try {
+    const { endpoint, keys } = req.body as {
+      endpoint: string;
+      keys: { p256dh: string; auth: string };
+    };
+
+    if (!endpoint || !keys?.p256dh || !keys?.auth) {
+      return res.status(400).json({ error: 'Data langganan tidak lengkap' });
+    }
+
+    const db = await getDb();
+    const userId = (req as any).user?.id || null;
+
+    await db.run(
+      `INSERT INTO push_subscriptions (id, user_id, endpoint, p256dh, auth)
+       VALUES (?, ?, ?, ?, ?)
+       ON CONFLICT(endpoint) DO UPDATE SET user_id = excluded.user_id`,
+      [crypto.randomUUID(), userId, endpoint, keys.p256dh, keys.auth]
+    );
+
+    res.json({ message: 'Langganan notifikasi disimpan' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Gagal menyimpan langganan notifikasi' });
+  }
+});
+
+router.delete('/push/unsubscribe', async (req, res) => {
+  try {
+    const { endpoint } = req.body as { endpoint: string };
+    if (!endpoint) return res.status(400).json({ error: 'Endpoint diperlukan' });
+
+    const db = await getDb();
+    await db.run('DELETE FROM push_subscriptions WHERE endpoint = ?', [endpoint]);
+    res.json({ message: 'Langganan notifikasi dihapus' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Gagal menghapus langganan notifikasi' });
+  }
+});
+
+router.post('/push/notify', pushNotifyLimiter, async (req, res) => {
+  try {
+    const { endpoint, notification } = req.body as {
+      endpoint: string;
+      notification: { title: string; body: string; tag?: string; url?: string };
+    };
+
+    if (!endpoint || !notification?.title) {
+      return res.status(400).json({ error: 'Data notifikasi tidak lengkap' });
+    }
+
+    const db = await getDb();
+    const sub = await db.get(
+      'SELECT * FROM push_subscriptions WHERE endpoint = ?',
+      [endpoint]
+    );
+
+    if (!sub) return res.status(404).json({ error: 'Langganan tidak ditemukan' });
+
+    const pushSub = {
+      endpoint: sub.endpoint,
+      keys: { p256dh: sub.p256dh, auth: sub.auth },
+    };
+
+    await getVapidKeys();
+    await webpush.sendNotification(pushSub, JSON.stringify(notification));
+
+    res.json({ message: 'Notifikasi terkirim' });
+  } catch (err: any) {
+    if (err?.statusCode === 410) {
+      // Subscription expired — clean up
+      const db = await getDb();
+      await db.run('DELETE FROM push_subscriptions WHERE endpoint = ?', [req.body?.endpoint]);
+      return res.status(410).json({ error: 'Langganan sudah tidak aktif' });
+    }
+    console.error(err);
+    res.status(500).json({ error: 'Gagal mengirim notifikasi' });
+  }
+});
+
+// Admin: broadcast to all subscribers
+router.post('/admin/push/broadcast', adminMiddleware, async (req, res) => {
+  try {
+    const { title, body, url } = req.body as {
+      title: string;
+      body: string;
+      url?: string;
+    };
+
+    if (!title || !body) return res.status(400).json({ error: 'Judul dan isi notifikasi diperlukan' });
+
+    const db = await getDb();
+    const subs = await db.all('SELECT * FROM push_subscriptions');
+
+    await getVapidKeys();
+
+    let sent = 0;
+    const expired: string[] = [];
+
+    await Promise.allSettled(
+      subs.map(async (sub: any) => {
+        try {
+          await webpush.sendNotification(
+            { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
+            JSON.stringify({ title, body, url: url || '/', tag: 'admin-broadcast' })
+          );
+          sent++;
+        } catch (err: any) {
+          if (err?.statusCode === 410) expired.push(sub.endpoint);
+        }
+      })
+    );
+
+    if (expired.length > 0) {
+      await Promise.all(
+        expired.map((ep) => db.run('DELETE FROM push_subscriptions WHERE endpoint = ?', [ep]))
+      );
+    }
+
+    res.json({ message: `Notifikasi terkirim ke ${sent} perangkat`, sent, expired: expired.length });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Gagal mengirim broadcast notifikasi' });
   }
 });
 
